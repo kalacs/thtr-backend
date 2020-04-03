@@ -11,6 +11,6 @@
     "webtorrent": "^0.107.17"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   }
 }

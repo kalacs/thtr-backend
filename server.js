@@ -9,9 +9,7 @@ const client = makeTorrentClient({
 });
 
 // Declare a route
-fastify.get("/torrents", async (request, reply) => {
-  return client.getTorrents();
-});
+fastify.get("/torrents", async () => client.getTorrents());
 
 fastify.get(
   "/torrents/:torrentId/server",
@@ -28,6 +26,8 @@ fastify.get(
     return dlna.play({ url: `http://192.168.0.124:8888/${index}` });
   }
 );
+
+fastify.get("/client", async () => client.getClientStat());
 
 // Run the server!
 const start = async () => {

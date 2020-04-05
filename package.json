@@ -4,9 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "async": "^3.2.0",
     "chokidar": "^3.3.1",
+    "debug": "^4.1.1",
     "dlnacasts": "^0.1.0",
     "fastify": "^2.13.0",
+    "globby": "^11.0.0",
     "ip": "^1.1.5",
     "webtorrent": "^0.107.17"
   },

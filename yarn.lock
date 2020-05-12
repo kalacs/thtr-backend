@@ -386,6 +386,11 @@ dlnacasts@^0.1.0:
     upnp-mediarenderer-client "^1.2.2"
     xml2js "^0.4.8"
 
+dotenv@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
+  integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
+
 elementtree@^0.1.6, elementtree@~0.1.6:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/elementtree/-/elementtree-0.1.7.tgz#9ac91be6e52fb6e6244c4e54a4ac3ed8ae8e29c0"

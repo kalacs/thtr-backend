@@ -10,9 +10,12 @@ module.exports = function (f, { client, scraper }, next) {
     client.getTorrent(torrentId)
   );
 
-  f.get("/:torrentId/server", ({ params: { torrentId } }) =>
-    client.createServer(torrentId)
-  );
+  f.get("/:torrentId/server", async ({ params: { torrentId } }) => {
+    const serverData = await client.createServer(torrentId);
+    const index = client.getMediaFileIndex(torrentId);
+    const { host, port } = serverData;
+    return Object.assign({}, serverData, { url: `${host}:${port}/${index}` });
+  });
 
   f.get("/:torrentId/dlnacast", async ({ params: { torrentId } }) => {
     const index = client.getMediaFileIndex(torrentId);

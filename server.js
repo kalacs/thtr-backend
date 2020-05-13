@@ -4,15 +4,27 @@ const AutoLoad = require("fastify-autoload");
 const path = require("path");
 
 const makeTorrentClient = require("./lib/webtorrent_client");
+const makeScraper = require("ncore-scraper");
+
+const SCRAPER_USERNAME = process.env.NCORE_NICK;
+const SCRAPER_PASSWORD = process.env.NCORE_PASSHASH;
+const CLIENT_DOWNLOAD_FOLDER = "downloads";
+const CLIENT_TORRENT_FOLDER = "torrentFiles";
+
+const scraper = makeScraper({
+  username: SCRAPER_USERNAME,
+  password: SCRAPER_PASSWORD,
+  type: "ncore",
+});
 
 const client = makeTorrentClient({
-  downloadPath: "downloads",
-  filePath: "torrentFiles",
+  downloadPath: CLIENT_DOWNLOAD_FOLDER,
+  filePath: CLIENT_TORRENT_FOLDER,
 });
 
 fastify.register(AutoLoad, {
   dir: path.join(__dirname, "routes"),
-  options: { client },
+  options: { client, scraper },
 });
 fastify.ready(() => {
   console.log(fastify.printRoutes());

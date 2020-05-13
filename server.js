@@ -1,33 +1,22 @@
 // Require the framework and instantiate it
 const fastify = require("fastify")({ logger: true });
+const AutoLoad = require("fastify-autoload");
+const path = require("path");
+
 const makeTorrentClient = require("./lib/webtorrent_client");
-const makeDlnaCast = require("./dlna");
 
 const client = makeTorrentClient({
   downloadPath: "downloads",
-  filePath: "torrentFiles"
+  filePath: "torrentFiles",
 });
 
-// Declare a route
-fastify.get("/torrents", async () => client.getTorrents());
-
-fastify.get(
-  "/torrents/:torrentId/server",
-  async ({ params: { torrentId } }) => {
-    return client.createServer(torrentId);
-  }
-);
-
-fastify.get(
-  "/torrents/:torrentId/dlnacast",
-  async ({ params: { torrentId } }) => {
-    const dlna = makeDlnaCast();
-    const index = client.getMediaFileIndex(torrentId);
-    return dlna.play({ url: `http://192.168.0.124:8888/${index}` });
-  }
-);
-
-fastify.get("/client", async () => client.getClientStat());
+fastify.register(AutoLoad, {
+  dir: path.join(__dirname, "routes"),
+  options: { client },
+});
+fastify.ready(() => {
+  console.log(fastify.printRoutes());
+});
 
 // Run the server!
 const start = async () => {
@@ -39,7 +28,7 @@ const start = async () => {
     process.exit(1);
   }
 };
-process.on("SIGINT", function() {
+process.on("SIGINT", function () {
   fastify.close();
   client.shutdown();
 });

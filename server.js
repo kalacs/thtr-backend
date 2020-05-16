@@ -1,3 +1,4 @@
+require("dotenv").config();
 // Require the framework and instantiate it
 const fastify = require("fastify")({ logger: true });
 const AutoLoad = require("fastify-autoload");
@@ -22,6 +23,10 @@ const client = makeTorrentClient({
   filePath: CLIENT_TORRENT_FOLDER,
 });
 
+fastify.register(require("fastify-cors"), {
+  origin: true,
+});
+
 fastify.register(AutoLoad, {
   dir: path.join(__dirname, "routes"),
   options: { client, scraper },
@@ -30,18 +35,15 @@ fastify.ready(() => {
   console.log(fastify.printRoutes());
 });
 
-// Run the server!
-const start = async () => {
-  try {
-    await fastify.listen(3000);
-    fastify.log.info(`server listening on ${fastify.server.address().port}`);
-  } catch (err) {
+fastify.listen(3000, "192.168.0.124", function (err) {
+  if (err) {
     fastify.log.error(err);
     process.exit(1);
   }
-};
+  fastify.log.info(`server listening on ${fastify.server.address().port}`);
+});
 process.on("SIGINT", function () {
+  console.log("SIGITN");
   fastify.close();
   client.shutdown();
 });
-start();

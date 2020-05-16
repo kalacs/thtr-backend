@@ -1,6 +1,7 @@
 const makeDlnaCast = require("../../lib/dlna");
 const { pipeline } = require("stream");
 const { createWriteStream } = require("fs");
+const { getAPIHost, getStreamPort } = require("../../config");
 
 module.exports = function (f, { client, scraper }, next) {
   // Declare a route
@@ -23,7 +24,7 @@ module.exports = function (f, { client, scraper }, next) {
 
     try {
       const play = await dlna.play({
-        url: `http://192.168.0.124:8888/${index}`,
+        url: `http://${getAPIHost()}:${getStreamPort()}}/${index}`,
       });
       return play;
     } catch (error) {

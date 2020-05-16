@@ -13,6 +13,7 @@
     "fastify-cors": "^3.0.3",
     "globby": "^11.0.0",
     "ip": "^1.1.5",
+    "ncore-scraper": "git+https://gitlab+deploy-token-173458:wLcXfJfheM9__-rAQy8d@gitlab.com/kalacs/ncore-scraper#master",
     "webtorrent": "^0.107.17"
   },
   "scripts": {

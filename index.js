@@ -1,6 +1,5 @@
 // Require the framework and instantiate it
 const fastify = require("fastify")({ logger: true });
-const AutoLoad = require("fastify-autoload");
 const path = require("path");
 const makeScraper = require("ncore-scraper");
 const { promisify } = require("util");
@@ -30,10 +29,23 @@ module.exports = function (config) {
     origin,
   });
 
-  fastify.register(AutoLoad, {
-    dir: path.join(__dirname, "routes"),
-    options: { client, scraper },
+  fastify.register(require("./routes/torrent-client/torrents"), {
+    client,
+    scraper,
+    config,
+    prefix: "/torrents",
   });
+  fastify.register(require("./routes/torrent-client/client"), {
+    client,
+    scraper,
+    prefix: "/client",
+  });
+  fastify.register(require("./routes/scraper"), {
+    client,
+    scraper,
+    prefix: "/scraper",
+  });
+
   fastify.ready(() => {
     console.log(fastify.printRoutes());
   });

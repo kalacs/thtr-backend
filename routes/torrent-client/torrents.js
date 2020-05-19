@@ -1,9 +1,8 @@
 const makeDlnaCast = require("../../lib/dlna");
 const { pipeline } = require("stream");
 const { createWriteStream } = require("fs");
-const { getAPIHost, getStreamPort } = require("../../config");
 
-module.exports = function (f, { client, scraper }, next) {
+module.exports = function (f, { client, scraper, config }, next) {
   // Declare a route
   f.get("/", async () => client.getTorrents());
 
@@ -24,7 +23,7 @@ module.exports = function (f, { client, scraper }, next) {
 
     try {
       const play = await dlna.play({
-        url: `http://${getAPIHost()}:${getStreamPort()}}/${index}`,
+        url: `http://${config.backend.host}:${config.backend.port}}/${index}`,
       });
       return play;
     } catch (error) {

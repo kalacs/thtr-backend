@@ -20,10 +20,9 @@ module.exports = function (f, { client, scraper, config }, next) {
   f.get("/:torrentId/dlnacast", async ({ params: { torrentId } }) => {
     const index = client.getMediaFileIndex(torrentId);
     const dlna = makeDlnaCast();
-
     try {
       const play = await dlna.play({
-        url: `http://${config.backend.host}:${config.backend.port}}/${index}`,
+        url: `http://${config.backend.host}:${config.torrentClient.streamPort}/${index}`,
       });
       return play;
     } catch (error) {

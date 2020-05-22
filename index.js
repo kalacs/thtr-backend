@@ -69,7 +69,7 @@ module.exports = function (config) {
       }
     },
     stop: function () {
-      return Promise.all([fastify.close(), client.shutdown()]);
+      return Promise.all([fastify.close(), client.shutdown(), dlna.stop()]);
     },
   };
 };

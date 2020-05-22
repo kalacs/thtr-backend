@@ -10,23 +10,24 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
   );
 
   f.get("/:torrentId/server", async ({ params: { torrentId } }) => {
-    const serverData = await client.createServer(torrentId);
-    const index = client.getMediaFileIndex(torrentId);
-    const { host, port } = serverData;
-    return Object.assign({}, serverData, { url: `${host}:${port}/${index}` });
-  });
-
-  f.get("/:torrentId/dlnacast", async ({ params: { torrentId } }) => {
-    const index = client.getMediaFileIndex(torrentId);
     try {
-      const play = await dlna.play(
-        `http://${config.backend.host}:${config.torrentClient.streamPort}/${index}`
-      );
-      return play;
+      await Promise.all([dlna.stop(), client.stopStreamServer()]);
+      const serverData = await client.startStreamServer(torrentId);
+      const index = client.getMediaFileIndex(torrentId);
+      const { host, port } = serverData;
+      serverData.url = `${host}:${port}/${index}`;
+      return serverData;
     } catch (error) {
       console.log(error);
       return error;
     }
+  });
+
+  f.get("/:torrentId/dlnacast", ({ params: { torrentId } }) => {
+    const index = client.getMediaFileIndex(torrentId);
+    return dlna.play(
+      `http://${config.backend.host}:${config.torrentClient.streamPort}/${index}`
+    );
   });
 
   f.post("/", async ({ body: { id, type = "ncore" } }, reply) => {

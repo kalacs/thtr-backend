@@ -1,9 +1,10 @@
 // Require the framework and instantiate it
 const fastify = require("fastify")({ logger: true });
 const path = require("path");
-const makeScraper = require("ncore-scraper");
 const { promisify } = require("util");
+const makeScraper = require("ncore-scraper");
 const makeTorrentClient = require("./lib/webtorrent_client");
+const makeDLNACast = require("./lib/dlna");
 
 module.exports = function (config) {
   const {
@@ -25,6 +26,9 @@ module.exports = function (config) {
     streamPort,
   });
 
+  const dlna = makeDLNACast();
+  dlna.startSearch();
+
   fastify.register(require("fastify-cors"), {
     origin,
   });
@@ -32,6 +36,7 @@ module.exports = function (config) {
   fastify.register(require("./routes/torrent-client/torrents"), {
     client,
     scraper,
+    dlna,
     config,
     prefix: "/torrents",
   });

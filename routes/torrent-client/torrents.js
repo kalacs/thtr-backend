@@ -34,6 +34,7 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
     try {
       const stream = await scraper.getTorrentFile(id);
       const fileName = await new Promise((resolve, reject) => {
+        client.pauseAllSeedableTorrent();
         stream.on("response", function (response) {
           const pattern = /filename="(.*)"/gm;
           const filenameHeader = response.headers["content-disposition"];
@@ -51,6 +52,7 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
       });
       return client.addTorrent(fileName);
     } catch (error) {
+      client.resumeAllSeedableTorrent();
       reply.code(400).send(error.message);
     }
   });

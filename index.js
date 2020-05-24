@@ -68,8 +68,10 @@ module.exports = function (config) {
         return true;
       }
     },
-    stop: function () {
-      return Promise.all([fastify.close(), client.shutdown(), dlna.stop()]);
+    stop: async function () {
+      await fastify.close();
+      await dlna.shutdown();
+      await client.shutdown();
     },
   };
 };

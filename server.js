@@ -3,6 +3,6 @@ const config = require("./config.json");
 const app = makeApplication(config);
 app.start();
 
-process.on("SIGINT", function () {
-  app.stop();
+process.on("SIGINT", async function () {
+  await app.stop();
 });

@@ -13,7 +13,7 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
     try {
       await Promise.all([dlna.stop(), client.stopStreamServer()]);
       const serverData = await client.startStreamServer(torrentId);
-      const index = client.getMediaFileIndex(torrentId);
+      const index = await client.getMediaFileIndex(torrentId);
       const { host, port } = serverData;
       serverData.url = `${host}:${port}/${index}`;
       return serverData;
@@ -23,8 +23,8 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
     }
   });
 
-  f.get("/:torrentId/dlnacast", ({ params: { torrentId } }) => {
-    const index = client.getMediaFileIndex(torrentId);
+  f.get("/:torrentId/dlnacast", async ({ params: { torrentId } }) => {
+    const index = await client.getMediaFileIndex(torrentId);
     return dlna.play(
       `http://${config.backend.host}:${config.torrentClient.streamPort}/${index}`
     );
@@ -33,6 +33,7 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
   f.post("/", async ({ body: { id, type = "ncore" } }, reply) => {
     try {
       const stream = await scraper.getTorrentFile(id);
+      const torrentFolder = await client.getTorrentFileFolder();
       const fileName = await new Promise((resolve, reject) => {
         client.pauseAllSeedableTorrent();
         stream.on("response", function (response) {
@@ -42,7 +43,7 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
 
           pipeline(
             stream,
-            createWriteStream(`${client.getTorrentFileFolder()}/${fileName}`),
+            createWriteStream(`${torrentFolder}/${fileName}`),
             (err) => {
               if (err) reject(err);
               resolve(fileName);

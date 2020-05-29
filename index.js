@@ -2,8 +2,8 @@
 const fastify = require("fastify")({ logger: true });
 const path = require("path");
 const { promisify } = require("util");
+const { fork } = require("child_process");
 const makeScraper = require("ncore-scraper");
-const makeTorrentClient = require("./lib/webtorrent_client");
 const makeDLNACast = require("./lib/dlna");
 
 module.exports = function (config) {
@@ -14,16 +14,17 @@ module.exports = function (config) {
     cors: { origin = ["*"] },
   } = config;
 
+  const torrentProcess = fork("./workers/torrent.js", [
+    downloadFolder,
+    torrentFolder,
+    streamPort,
+  ]);
+  const client = require("./workers/torrent-proxy")(torrentProcess);
+
   const scraper = makeScraper({
     username,
     password,
     type,
-  });
-
-  const client = makeTorrentClient({
-    downloadPath: downloadFolder,
-    filePath: torrentFolder,
-    streamPort,
   });
 
   const dlna = makeDLNACast();
@@ -69,9 +70,11 @@ module.exports = function (config) {
       }
     },
     stop: async function () {
+      console.log("STOP START");
       await fastify.close();
       await dlna.shutdown();
       await client.shutdown();
+      console.log("SHUTDOWN FINISHED");
     },
   };
 };

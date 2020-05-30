@@ -13,20 +13,6 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
     client.getMediaFileIndex(torrentId)
   );
 
-  f.get("/:torrentId/server", async ({ params: { torrentId } }) => {
-    try {
-      await Promise.all([dlna.stop(), client.stopStreamServer()]);
-      const serverData = await client.startStreamServer(torrentId);
-      const index = await client.getMediaFileIndex(torrentId);
-      const { host, port } = serverData;
-      serverData.url = `${host}:${port}/${index}`;
-      return serverData;
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
-  });
-
   f.get("/:torrentId/dlnacast", async ({ params: { torrentId } }) => {
     const index = await client.getMediaFileIndex(torrentId);
     return dlna.play(

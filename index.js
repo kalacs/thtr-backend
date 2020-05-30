@@ -9,7 +9,8 @@ const makeDLNACast = require("./lib/dlna");
 module.exports = function (config) {
   const {
     scraper: { username, password, type = "ncore" },
-    torrentClient: { downloadFolder, torrentFolder, streamPort },
+    torrentClient: { downloadFolder, torrentFolder },
+    streamServer,
     backend: { host, port },
     cors: { origin = ["*"] },
   } = config;
@@ -17,14 +18,11 @@ module.exports = function (config) {
   const torrentProcess = fork("./workers/torrent.js", [
     downloadFolder,
     torrentFolder,
-    streamPort,
   ]);
   const client = require("./workers/worker-proxy")(torrentProcess, [
     "shutdown",
-    "stopStreamServer",
     "stopTorrentClient",
     "getTorrents",
-    "startStreamServer",
     "getMediaFileIndex",
     "getClientStat",
     "getTorrent",
@@ -33,6 +31,14 @@ module.exports = function (config) {
     "pauseAllSeedableTorrent",
     "resumeAllSeedableTorrent",
   ]);
+
+  const streamServerProcess = fork("./workers/stream-server", [
+    JSON.stringify(streamServer),
+  ]);
+  const streamServerService = require("./workers/worker-proxy")(
+    streamServerProcess,
+    ["streamerShutdown", "start", "stop"]
+  );
 
   const scraper = makeScraper({
     username,
@@ -64,6 +70,10 @@ module.exports = function (config) {
     scraper,
     prefix: "/scraper",
   });
+  fastify.register(require("./routes/stream-server"), {
+    streamServer: streamServerService,
+    prefix: "/stream-server",
+  });
 
   fastify.ready(() => {
     console.log(fastify.printRoutes());
@@ -87,6 +97,7 @@ module.exports = function (config) {
       await fastify.close();
       await dlna.shutdown();
       await client.shutdown();
+      await streamServerService.streamerShutdown();
       console.log("SHUTDOWN FINISHED");
     },
   };

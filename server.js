@@ -7,4 +7,5 @@ app.start();
 (async () => {
   await pEvent(process, "SIGINT");
   await app.stop();
+  process.exit(0);
 })();

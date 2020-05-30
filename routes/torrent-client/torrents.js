@@ -9,6 +9,10 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
     client.getTorrent(torrentId)
   );
 
+  f.get("/:torrentId/file", async ({ params: { torrentId } }) =>
+    client.getMediaFileIndex(torrentId)
+  );
+
   f.get("/:torrentId/server", async ({ params: { torrentId } }) => {
     try {
       await Promise.all([dlna.stop(), client.stopStreamServer()]);

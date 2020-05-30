@@ -1,21 +1,6 @@
 const pEvent = require("p-event");
 
-const validFunctions = [
-  "shutdown",
-  "stopStreamServer",
-  "stopTorrentClient",
-  "getTorrents",
-  "startStreamServer",
-  "getMediaFileIndex",
-  "getClientStat",
-  "getTorrent",
-  "getTorrentFileFolder",
-  "addTorrent",
-  "pauseAllSeedableTorrent",
-  "resumeAllSeedableTorrent",
-];
-
-module.exports = (childProcess) => {
+module.exports = (childProcess, validFunctions) => {
   return new Proxy(
     {},
     {

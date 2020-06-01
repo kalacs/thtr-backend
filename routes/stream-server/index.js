@@ -1,6 +1,5 @@
 module.exports = function (f, { streamServer }, next) {
   f.post("/", async ({ body: { length, name, path, progress } }) => {
-    await streamServer.stop();
     return streamServer.start({
       length,
       name,
@@ -9,7 +8,7 @@ module.exports = function (f, { streamServer }, next) {
     });
   });
   f.delete("/", async () => {
-    await streamServer.stop();
+    await streamServer.streamerShutdown();
     return true;
   });
 

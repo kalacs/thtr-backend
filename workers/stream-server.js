@@ -11,9 +11,7 @@ console.log(`Stream server PID: ${process.pid}`);
   });
 
   for await (const { command = "noop", params = [] } of asyncIterator) {
-    console.log("RUN FUNC", command);
     const result = await service[command](...params);
-    console.log("SEND RESULT BACK", { command, result });
     process.send({ command, result });
   }
 })();

@@ -1,12 +1,8 @@
 const makeTorrentClient = require("../lib/webtorrent_client");
 const pEvent = require("p-event");
 const { argv } = process;
-
-const client = makeTorrentClient({
-  downloadPath: argv[2],
-  filePath: argv[3],
-  streamPort: argv[4],
-});
+console.log(JSON.parse(argv[2]));
+const client = makeTorrentClient(JSON.parse(argv[2]));
 console.log(`Torrent client PID: ${process.pid}`);
 
 (async () => {

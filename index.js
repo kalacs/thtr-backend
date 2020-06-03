@@ -15,11 +15,22 @@ module.exports = function (config) {
   } = config;
 
   const torrentProcess = fork("./workers/torrent.js", [
-    downloadFolder,
-    torrentFolder,
-    streamPort,
+    JSON.stringify({ downloadFolder, torrentFolder, streamPort }),
   ]);
-  const client = require("./workers/torrent-proxy")(torrentProcess);
+  const client = require("./workers/worker-proxy")(torrentProcess, [
+    "shutdown",
+    "stopStreamServer",
+    "stopTorrentClient",
+    "getTorrents",
+    "startStreamServer",
+    "getMediaFileIndex",
+    "getClientStat",
+    "getTorrent",
+    "getTorrentFileFolder",
+    "addTorrent",
+    "pauseAllSeedableTorrent",
+    "resumeAllSeedableTorrent",
+  ]);
 
   const scraper = makeScraper({
     username,

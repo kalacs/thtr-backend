@@ -12,8 +12,12 @@
     "fastify-cors": "^3.0.3",
     "globby": "^11.0.0",
     "ip": "^1.1.5",
+    "mime": "^2.4.6",
     "ncore-scraper": "git+https://gitlab+deploy-token-173458:wLcXfJfheM9__-rAQy8d@gitlab.com/kalacs/ncore-scraper#master",
     "p-event": "^4.1.0",
+    "pump": "^3.0.0",
+    "range-parser": "^1.2.1",
+    "unordered-array-remove": "^1.0.2",
     "webtorrent": "^0.108.3"
   },
   "scripts": {

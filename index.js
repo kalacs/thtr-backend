@@ -14,10 +14,13 @@ module.exports = function (config) {
     cors: { origin = ["*"] },
   } = config;
 
-  const torrentProcess = fork("./workers/torrent.js", [
+  const torrentProcess = fork(path.join(__dirname, "./workers/torrent.js"), [
     JSON.stringify({ downloadFolder, torrentFolder, streamPort }),
   ]);
-  const client = require("./workers/worker-proxy")(torrentProcess, [
+  const client = require(path.join(
+    __dirname,
+    "./workers/worker-proxy"
+  ))(torrentProcess, [
     "shutdown",
     "stopStreamServer",
     "stopTorrentClient",

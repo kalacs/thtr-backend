@@ -6,12 +6,12 @@
   "dependencies": {
     "async": "^3.2.0",
     "debug": "^4.1.1",
+    "deepmerge": "^4.2.2",
     "dlnacasts": "^0.1.0",
     "dotenv": "^8.2.0",
     "fastify": "^2.13.0",
     "fastify-cors": "^3.0.3",
     "globby": "^11.0.0",
-    "ip": "^1.1.5",
     "mime": "^2.4.6",
     "ncore-scraper": "git+https://gitlab+deploy-token-173458:wLcXfJfheM9__-rAQy8d@gitlab.com/kalacs/ncore-scraper#master",
     "p-event": "^4.1.0",

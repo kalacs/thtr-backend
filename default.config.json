@@ -1,0 +1,26 @@
+{
+  "torrentProviderService": {
+    "username": "",
+    "password": "",
+    "type": "ncore"
+  },
+  "torrentClientService": {
+    "downloadFolder": "downloads",
+    "torrentFolder": "torrentFiles",
+    "streamServer": {
+      "network": {
+        "interface": "eth0",
+        "host": "",
+        "port": 8888
+      }
+    }
+  },
+  "apiService": {
+    "network": {
+      "interface": "eth0",
+      "host": "",
+      "port": 3000
+    },
+    "cors": { "origin": [] }
+  }
+}

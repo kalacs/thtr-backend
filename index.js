@@ -5,17 +5,20 @@ const { promisify } = require("util");
 const { fork } = require("child_process");
 const makeScraper = require("ncore-scraper");
 const makeDLNACast = require("./lib/dlna");
+const ipAddressResolver = require("./utils/ip-address-resolver");
 
 module.exports = function (config) {
   const {
-    scraper: { username, password, type = "ncore" },
-    torrentClient: { downloadFolder, torrentFolder, streamPort },
-    backend: { host, port },
-    cors: { origin = ["*"] },
+    torrentProviderService: { username, password, type = "ncore" },
+    torrentClientService: { downloadFolder, torrentFolder, streamServer },
+    apiService: {
+      network,
+      cors: { origin = ["*"] },
+    },
   } = config;
 
   const torrentProcess = fork(path.join(__dirname, "./workers/torrent.js"), [
-    JSON.stringify({ downloadFolder, torrentFolder, streamPort }),
+    JSON.stringify({ downloadFolder, torrentFolder, streamServer }),
   ]);
   const client = require(path.join(
     __dirname,
@@ -73,6 +76,7 @@ module.exports = function (config) {
   return {
     start: async function () {
       try {
+        const { port, host } = ipAddressResolver(network);
         await promisify(fastify.listen.bind(fastify))(port, host);
         fastify.log.info(
           `server listening on ${fastify.server.address().port}`

@@ -55,7 +55,6 @@ module.exports = function (config) {
     client,
     scraper,
     dlna,
-    config,
     prefix: "/torrents",
   });
   fastify.register(require("./routes/torrent-client/client"), {

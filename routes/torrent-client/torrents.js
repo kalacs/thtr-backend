@@ -1,34 +1,9 @@
 const { pipeline } = require("stream");
 const { createWriteStream } = require("fs");
 
-module.exports = function (f, { client, scraper, config, dlna }, next) {
+module.exports = function (f, { client, scraper, dlna }, next) {
   // Declare a route
   f.get("/", async () => client.getTorrents());
-
-  f.get("/:torrentId", async ({ params: { torrentId } }) =>
-    client.getTorrent(torrentId)
-  );
-
-  f.get("/:torrentId/server", async ({ params: { torrentId } }) => {
-    try {
-      await Promise.all([dlna.stop(), client.stopStreamServer()]);
-      const serverData = await client.startStreamServer(torrentId);
-      const index = await client.getMediaFileIndex(torrentId);
-      const { host, port } = serverData;
-      serverData.url = `${host}:${port}/${index}`;
-      return serverData;
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
-  });
-
-  f.get("/:torrentId/dlnacast", async ({ params: { torrentId } }) => {
-    const index = await client.getMediaFileIndex(torrentId);
-    return dlna.play(
-      `http://${config.backend.host}:${config.torrentClient.streamPort}/${index}`
-    );
-  });
 
   f.post("/", async ({ body: { id, type = "ncore" } }, reply) => {
     try {
@@ -57,6 +32,27 @@ module.exports = function (f, { client, scraper, config, dlna }, next) {
       reply.code(400).send(error.message);
     }
   });
+
+  f.get("/:torrentId", async ({ params: { torrentId } }) =>
+    client.getTorrent(torrentId)
+  );
+
+  f.get("/:torrentId/server", async ({ params: { torrentId } }) => {
+    try {
+      await Promise.all([dlna.stop(), client.stopStreamServer()]);
+      const serverData = await client.startStreamServer(torrentId);
+      const index = await client.getMediaFileIndex(torrentId);
+      const { host, port } = serverData;
+      serverData.url = `${host}:${port}/${index}`;
+      return serverData;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  });
+  // TODO: move out to dlna routes
+  f.post("/dlnacast", async ({ body: { url } }) => dlna.play(url));
+  f.delete("/dlnacast", async () => dlna.stop());
 
   next();
 };

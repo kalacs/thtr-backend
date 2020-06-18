@@ -9,8 +9,8 @@ const ipAddressResolver = require("./utils/ip-address-resolver");
 
 module.exports = function (config) {
   const {
-    torrentProviderService: { username, password, type = "ncore" },
-    torrentClientService: { downloadFolder, torrentFolder, streamServer },
+    torrentProviderService,
+    torrentClientService,
     apiService: {
       network,
       cors: { origin = ["*"] },
@@ -18,7 +18,7 @@ module.exports = function (config) {
   } = config;
 
   const torrentProcess = fork(path.join(__dirname, "./workers/torrent.js"), [
-    JSON.stringify({ downloadFolder, torrentFolder, streamServer }),
+    JSON.stringify(torrentClientService),
   ]);
   const client = require(path.join(
     __dirname,
@@ -38,12 +38,7 @@ module.exports = function (config) {
     "resumeAllSeedableTorrent",
   ]);
 
-  const scraper = makeScraper({
-    username,
-    password,
-    type,
-  });
-
+  const scraper = makeScraper(torrentProviderService);
   const dlna = makeDLNACast();
   dlna.startSearch();
 

@@ -6,8 +6,11 @@ const { fork } = require("child_process");
 const makeScraper = require("ncore-scraper");
 const makeDLNACast = require("./lib/dlna");
 const ipAddressResolver = require("./utils/ip-address-resolver");
+const configureApp = require("./utils/config");
+const defaultConfig = require("./default.config.json");
 
-module.exports = function (config) {
+module.exports = function (userConfig) {
+  const config = configureApp(defaultConfig, userConfig);
   const {
     torrentProviderService,
     torrentClientService,

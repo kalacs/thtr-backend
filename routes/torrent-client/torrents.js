@@ -51,7 +51,15 @@ module.exports = function (f, { client, scraper, dlna }, next) {
     }
   });
   // TODO: move out to dlna routes
-  f.post("/dlnacast", async ({ body: { url } }) => dlna.play(url));
+  f.post("/dlnacast", async ({ body: { url } }) => {
+    try {
+      await dlna.play(url);
+      return { url };
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  });
   f.delete("/dlnacast", async () => dlna.stop());
 
   next();

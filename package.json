@@ -1,5 +1,5 @@
 {
-  "name": "webtorrent-api",
+  "name": "thtr-backend",
   "version": "0.6.1",
   "main": "index.js",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "fastify-cors": "^3.0.3",
     "globby": "^11.0.0",
     "mime": "^2.4.6",
-    "ncore-scraper": "git+https://gitlab+deploy-token-173458:wLcXfJfheM9__-rAQy8d@gitlab.com/kalacs/ncore-scraper#master",
+    "ncore-scraper": "git+ssh://git@github.com:kalacs/ncore-scraper2.git#v0.3.1",
     "p-event": "^4.1.0",
     "pump": "^3.0.0",
     "range-parser": "^1.2.1",

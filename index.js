@@ -3,7 +3,7 @@ const fastify = require("fastify")({ logger: true });
 const path = require("path");
 const { promisify } = require("util");
 const { fork } = require("child_process");
-const makeScraper = require("ncore-scraper");
+const createNcoreApi = require("ncore-api");
 const makeDLNACast = require("./lib/dlna");
 const ipAddressResolver = require("./utils/ip-address-resolver");
 const configureApp = require("./utils/config");
@@ -41,7 +41,7 @@ module.exports = function (userConfig) {
     "resumeAllSeedableTorrent",
   ]);
 
-  const scraper = makeScraper(torrentProviderService);
+  const scraper = createNcoreApi(torrentProviderService);
   const dlna = makeDLNACast();
   dlna.startSearch();
 

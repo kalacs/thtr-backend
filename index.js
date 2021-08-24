@@ -40,40 +40,37 @@ module.exports = function (userConfig) {
     "pauseAllSeedableTorrent",
     "resumeAllSeedableTorrent",
   ]);
-
-  const scraper = createNcoreApi(torrentProviderService);
   const dlna = makeDLNACast();
   dlna.startSearch();
-
-  fastify.register(require("fastify-cors"), {
-    origin,
-  });
-
-  fastify.register(require("./routes/torrent-client/torrents"), {
-    client,
-    scraper,
-    dlna,
-    prefix: "/torrents",
-  });
-  fastify.register(require("./routes/torrent-client/client"), {
-    client,
-    scraper,
-    prefix: "/client",
-  });
-  fastify.register(require("./routes/scraper"), {
-    client,
-    scraper,
-    prefix: "/scraper",
-  });
-
-  fastify.ready(() => {
-    console.log(fastify.printRoutes());
-  });
 
   return {
     start: async function () {
       try {
+        const scraper = await createNcoreApi(torrentProviderService);
         const { port, host } = ipAddressResolver(network);
+      
+        fastify.register(require("fastify-cors"), {
+          origin,
+        });
+        fastify.register(require("./routes/torrent-client/torrents"), {
+          client,
+          scraper,
+          dlna,
+          prefix: "/torrents",
+        });
+        fastify.register(require("./routes/torrent-client/client"), {
+          client,
+          scraper,
+          prefix: "/client",
+        });
+        fastify.register(require("./routes/scraper"), {
+          client,
+          scraper,
+          prefix: "/scraper",
+        });
+        fastify.ready(() => {
+          console.log(fastify.printRoutes());
+        });
         await promisify(fastify.listen.bind(fastify))(port, host);
         fastify.log.info(
           `server listening on ${fastify.server.address().port}`
